@@ -53,7 +53,8 @@ As in most other research that using SDD for trajectory prediction as PCENet (EC
 We observe the trajectory for 8 times steps (3.2 seconds) and show prediction results for 8 (3.2 seconds) and 12 (4.8 seconds) time steps.
 
 2- Set the path for saving your trained models in the code.
-3- Run the following scripts (train and evaluate.py) under scripts to train and test the model
+
+3- Run the following scripts (train and evaluate.py) under scripts to train and test the model.
 
 # Notes
 The repository is still under construction. Please let me know if you encounter any issues.
