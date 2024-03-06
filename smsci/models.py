@@ -14,9 +14,8 @@ import numpy as np
 import time
 import yaml
 
-
 global dropout_val
-dropout_val             = 0.2 #0.5
+dropout_val             = 0.2 
 T_obs                   = 8
 T_pred                  = 12
 T_total                 = T_obs + T_pred
@@ -25,22 +24,16 @@ batch_size              = 64
 chunk_size              = batch_size * T_total # Chunksize should be multiple of T_total
 in_size = 2
 stochastic_out_size     = in_size * 2
-
 teacher_forcing_ratio   = 0.7 
 regularization_factor   = 0.5
 avg_n_path_eval         = 20
 bst_n_path_eval         = 20
-path_mode               = "top5" #"avg","bst","single","top5"
-regularization_mode     = "regular" #"weighted","e_weighted", "regular"
-startpoint_mode         = "off" #"on","off"
-enc_out                 = "on" #"on","off"
+startpoint_mode         = "off"
+enc_out                 = "on"
 biased_loss_mode        = 0 # 0 , 1
-
-table_out   = "results_delta"
 table       = "dataset_T_length_"+str(T_total)+"delta_coordinates"
 epoch_num   = 200
 from_epoch  = 0
-
 # Visual Variables
 image_size              = 256  
 image_dimension         = 3
@@ -72,14 +65,12 @@ def make_mlp(dim_list, activation='relu', batch_norm=True, dropout=0):
             layers.append(nn.Dropout(p=dropout))
     return nn.Sequential(*layers)
 
-
 def get_noise(shape, noise_type):
     if noise_type == 'gaussian':
         return torch.randn(*shape).cuda()
     elif noise_type == 'uniform':
         return torch.rand(*shape).sub_(0.5).mul_(2.0).cuda()
     raise ValueError('Unrecognized noise type "%s"' % noise_type)
-
 
 class Encoder(nn.Module):
     """Encoder is part of both TrajectoryGenerator and TrajectoryDiscriminator"""
@@ -410,7 +401,6 @@ class Decoder(nn.Module):
         return output
 
     def forward(self, input, hidden): 
- 
         embedding                       = self.spatial_embedding(input.reshape(-1,2))
         embedding                       = F.relu(self.dropout(embedding))
         output, hidden                  = self.decoder(embedding.unsqueeze(1), ( hidden[0],hidden[1] ))
@@ -923,45 +913,21 @@ class TrajectoryGenerator(nn.Module):
             stochastic_decoder_output, decoder_h   = self.decoder(decoder_input, decoder_h)
             # Reparameterization Trick :)
             decoder_output              = torch.zeros(batch_vis,1,2).cuda()
-            
-            if stochastic_mode and path_mode=='single':
-                decoder_output[:,:,0]  = stochastic_decoder_output[:,:,0] + epsilonX.sample().cuda() * stochastic_decoder_output[:,:,1]
-                decoder_output[:,:,1]  = stochastic_decoder_output[:,:,2] + epsilonY.sample().cuda() * stochastic_decoder_output[:,:,3]
-            elif stochastic_mode and path_mode=='avg':
-                decoder_output[:,:,0]  = stochastic_decoder_output[:,:,0] + epsilonX.sample((avg_n_path_eval,1)).view(-1,avg_n_path_eval,1).mean(-2).cuda() * stochastic_decoder_output[:,:,1]
-                decoder_output[:,:,1]  = stochastic_decoder_output[:,:,2] + epsilonY.sample((avg_n_path_eval,1)).view(-1,avg_n_path_eval,1).mean(-2).cuda() * stochastic_decoder_output[:,:,3]
-            elif not(stochastic_mode):
-                decoder_output[:,:,0]  = stochastic_decoder_output[:,:,0] 
-                decoder_output[:,:,1]  = stochastic_decoder_output[:,:,2] 
-            elif stochastic_mode and path_mode == "bst":
-                epsilon_x               = torch.randn([batch_size,bst_n_path_eval,1], dtype=torch.float).cuda()
-                epsilon_y               = torch.randn([batch_size,bst_n_path_eval,1], dtype=torch.float).cuda()
-                multi_path_x            = stochastic_decoder_output[:,:,0].unsqueeze(1) + epsilon_x * stochastic_decoder_output[:,:,1].unsqueeze(1)
-                multi_path_y            = stochastic_decoder_output[:,:,2].unsqueeze(1) + epsilon_y * stochastic_decoder_output[:,:,3].unsqueeze(1)
-                ground_truth_x          = output_tensor[:,t,0].view(batch_size,1,1).cuda()
-                ground_truth_y          = output_tensor[:,t,1].view(batch_size,1,1).cuda()
-                diff_path_x             = multi_path_x - ground_truth_x
-                diff_path_y             = multi_path_y - ground_truth_y
-                diff_path               = (torch.sqrt( diff_path_x.pow(2) + diff_path_y.pow(2) )).sum(dim=-1)
-                idx                     = torch.arange(batch_size,dtype=torch.long).cuda()
-                min                     = torch.argmin(diff_path,dim=1).squeeze()
-                decoder_output[:,:,0]   = multi_path_x[idx,min,:].view(batch_size,1)
-                decoder_output[:,:,1]   = multi_path_y[idx,min,:].view(batch_size,1)
-            elif stochastic_mode and path_mode == "top5":
-                k = 5
-                epsilon_x               = torch.randn([batch_size,bst_n_path_eval,1], dtype=torch.float).cuda()
-                epsilon_y               = torch.randn([batch_size,bst_n_path_eval,1], dtype=torch.float).cuda()
-                multi_path_x            = stochastic_decoder_output[:,:,0].unsqueeze(1) + epsilon_x * stochastic_decoder_output[:,:,1].unsqueeze(1)
-                multi_path_y            = stochastic_decoder_output[:,:,2].unsqueeze(1) + epsilon_y * stochastic_decoder_output[:,:,3].unsqueeze(1)
-                ground_truth_x          = output_tensor[:,t,0].view(batch_size,1,1).cuda()
-                ground_truth_y          = output_tensor[:,t,1].view(batch_size,1,1).cuda()
-                diff_path_x             = multi_path_x - ground_truth_x
-                diff_path_y             = multi_path_y - ground_truth_y
-                diff_path               = (torch.sqrt( diff_path_x.pow(2) + diff_path_y.pow(2) )).sum(dim=-1)
-                idx                     = torch.arange(batch_size,dtype=torch.long).repeat(k).view(k,-1).transpose(0,1).cuda()
-                min_val, min            = torch.topk(diff_path, k=k, dim=1,largest=False)
-                decoder_output[:,:,0]   = multi_path_x[idx,min,:].mean(dim=-2).view(batch_size,1)
-                decoder_output[:,:,1]   = multi_path_y[idx,min,:].mean(dim=-2).view(batch_size,1)
+
+            k = 5
+            epsilon_x               = torch.randn([batch_size,bst_n_path_eval,1], dtype=torch.float).cuda()
+            epsilon_y               = torch.randn([batch_size,bst_n_path_eval,1], dtype=torch.float).cuda()
+            multi_path_x            = stochastic_decoder_output[:,:,0].unsqueeze(1) + epsilon_x * stochastic_decoder_output[:,:,1].unsqueeze(1)
+            multi_path_y            = stochastic_decoder_output[:,:,2].unsqueeze(1) + epsilon_y * stochastic_decoder_output[:,:,3].unsqueeze(1)
+            ground_truth_x          = output_tensor[:,t,0].view(batch_size,1,1).cuda()
+            ground_truth_y          = output_tensor[:,t,1].view(batch_size,1,1).cuda()
+            diff_path_x             = multi_path_x - ground_truth_x
+            diff_path_y             = multi_path_y - ground_truth_y
+            diff_path               = (torch.sqrt( diff_path_x.pow(2) + diff_path_y.pow(2) )).sum(dim=-1)
+            idx                     = torch.arange(batch_size,dtype=torch.long).repeat(k).view(k,-1).transpose(0,1).cuda()
+            min_val, min            = torch.topk(diff_path, k=k, dim=1,largest=False)
+            decoder_output[:,:,0]   = multi_path_x[idx,min,:].mean(dim=-2).view(batch_size,1)
+            decoder_output[:,:,1]   = multi_path_y[idx,min,:].mean(dim=-2).view(batch_size,1)
 
             # Log output
             pred_traj_fake_rel[:,t,:]             = decoder_output.squeeze(1)
