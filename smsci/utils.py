@@ -6,10 +6,8 @@ import inspect
 from contextlib import contextmanager
 import subprocess
 
-
 def int_tuple(s):
     return tuple(int(i) for i in s.split(','))
-
 
 def find_nan(variable, var_name):
     variable_n = variable.data.cpu().numpy()
@@ -44,7 +42,6 @@ def get_total_norm(parameters, norm_type=2):
                 continue
     return total_norm
 
-
 @contextmanager
 def timeit(msg, should_time=True):
     if should_time:
@@ -57,12 +54,9 @@ def timeit(msg, should_time=True):
         duration = (t1 - t0) * 1000.0
         print('%s: %.2f ms' % (msg, duration))
 
-
 def get_gpu_memory():
     torch.cuda.synchronize()
-    opts = [
-        'nvidia-smi', '-q', '--gpu=' + str(1), '|', 'grep', '"Used GPU Memory"'
-    ]
+    opts = ['nvidia-smi', '-q', '--gpu=' + str(1), '|', 'grep', '"Used GPU Memory"']
     cmd = str.join(' ', opts)
     ps = subprocess.Popen(
         cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
