@@ -1,7 +1,5 @@
 from torch.utils.data import DataLoader
-
 from trajectories import *
-
 
 def data_loader(args, path):
     dset = TrajectoryDataset(
