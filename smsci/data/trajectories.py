@@ -1,9 +1,7 @@
 import logging
 import os
 import math
-
 from torch.utils.data import Dataset
-
 import pandas as pd
 import sqlite3
 import time
@@ -14,9 +12,7 @@ import torch.optim as optim
 import torchvision
 from torchvision.utils import save_image
 from torch.distributions.normal import Normal
-
 from PIL import Image
-
 import math
 import os
 import numpy as np
@@ -24,16 +20,13 @@ import random
 import matplotlib.pyplot as plt
 from skimage.io import imread, imshow
 import datetime
-import cv2
 from skimage.util import img_as_ubyte
 import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 import argparse
 
-
 logger = logging.getLogger(__name__)
-
 
 def seq_collate(data):
     (obs_seq_list, pred_seq_list, obs_seq_rel_list, pred_seq_rel_list,non_linear_ped_list, loss_mask_list) = zip(*data)
@@ -71,7 +64,6 @@ def read_file(_path, delim='\t'):
             data.append(line)
     return np.asarray(data)
 
-
 def poly_fit(traj, traj_len, threshold):
     """
     Input:
@@ -89,8 +81,7 @@ def poly_fit(traj, traj_len, threshold):
     else:
         return 0.0
 
-
-dataset_name = "eth" 
+dataset_name = "eth"
 
 __file__=os.getcwd()
 print(__file__)
@@ -117,24 +108,17 @@ T_pred                  = 12
 T_total                 = T_obs + T_pred
 data_id                 = 0 
 batch_size              = 64
-chunk_size              = batch_size * T_total # Chunksize should be multiple of T_total
+chunk_size              = batch_size * T_total
 in_size                 = 2
 stochastic_out_size     = in_size * 2
 hidden_size             = 256 #!64
 embed_size              = 64 #16 #!64
 global dropout_val
 dropout_val             = 0.2 #0.5
-teacher_forcing_ratio   = 0.7 # 0.9
-regularization_factor   = 0.5 # 0.001
+teacher_forcing_ratio   = 0.7
 avg_n_path_eval         = 20
 bst_n_path_eval         = 20
-path_mode               = "top5" #"avg","bst","single","top5"
-regularization_mode     = "regular" #"weighted","e_weighted", "regular"
-startpoint_mode         = "on" #"on","off"
-enc_out                 = "on" #"on","off"
-biased_loss_mode        = 0 # 0 , 1
 
-table_out   = "results_delta"
 table       = "dataset_T_length_"+str(T_total)+"delta_coordinates"
 df_id       = pd.read_sql_query("SELECT data_id FROM "+table, cnx_train)
 data_size   = df_id.data_id.max() * T_total
@@ -180,10 +164,7 @@ class TrajectoryPredictionDataset(torch.utils.data.Dataset):
 
 class TrajectoryDataset(Dataset):
     """Dataloder for the Trajectory datasets"""
-    def __init__(
-        self, data_dir, obs_len=8, pred_len=12, skip=1, threshold=0.002,
-        min_ped=1, delim='\t'
-    ):
+    def __init__(self, data_dir, obs_len=8, pred_len=12, skip=1, threshold=0.002,min_ped=1, delim='\t'):
         """
         Args:
         - data_dir: Directory containing dataset files in the format
