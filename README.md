@@ -9,8 +9,7 @@ This research achieves a breakthrough in simultaneously predicting multiple pede
 By integrating both historical paths and environmental context, SMSCI accounts for both social interactions and scene influences, outperforming previous approaches. 
 Through experiments demonstrating enhanced accuracy and collision avoidance, the effectiveness of generating socially and physically valid trajectories is demonstrated. 
 
-<img width="920" alt="SMSCI_arch" src="https://github.com/anonyme-anonymee/SMSCI/assets/159822306/67b7a872-958e-420a-ae3e-cd39152ce976">
-
+![overview](https://github.com/anonyme-anonymee/SMSCI/assets/159822306/cc0361b7-2e20-4060-a6c5-b7027c948813)
 
 # Prerequisites
 
