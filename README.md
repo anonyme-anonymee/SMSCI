@@ -32,7 +32,7 @@ We use leave-one-out approach, train on 4 sets and test on the remaining set.
 
 For Stanford Drone dataset, each video for each scene in the videos directory has an associated annotation file (annotation.txt) and exemplary frame (reference.jpg) in the annotations directory. It consists of annotated videos of pedestrians, bikers, skateboarders, cars, buses, and golf carts navigating eight unique scenes on the Stanford University campus.
 
-Please download SDD dataset from their website.
+Please download SDD dataset from their website (https://cvgl.stanford.edu/projects/uav_data/).
 
 Annotation file format:
 Each line in the annotations.txt file corresponds to an annotation. Each line contains 10+ columns, separated by spaces. The definition of these columns are:
