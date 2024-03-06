@@ -1,7 +1,8 @@
-# SMSCI
+# SMSCI: Simultaneous Modeling of Social and Contextual Interactions for Multi Pedestrian Trajectory Prediction
+
+This repository contains the implementation of SMSCI: Simultaneous Modeling of Social and Contextual Interactions for Multi Pedestrian Trajectory Prediction.
 
 # Overview
-This repository contains the implementation of SMSCI: Simultaneous Modeling of Social and Contextual Interactions for Multi Pedestrian Trajectory Prediction.
 
 We explore the limitations of prior methods reliant on pedestrian positions for modeling social interactions and scene influences. 
 This research achieves a breakthrough in simultaneously predicting multiple pedestrian trajectories in a scene video by introducing the SMSCI model which uses Generative Adversarial Networks and sequence prediction. 
