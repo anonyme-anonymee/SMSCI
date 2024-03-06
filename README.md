@@ -15,7 +15,9 @@ Through experiments demonstrating enhanced accuracy and collision avoidance, the
 
 To install all the dependency packages, please run:
 
+```
 pip install -r requirements.txt
+```
 
 # Data Preparation
 
