@@ -541,22 +541,13 @@ def check_accuracy(args, loader, generator, discriminator, d_loss_fn, train_load
             linear_ped = 1 - non_linear_ped
             loss_mask = loss_mask[:, args.obs_len:]
 
-            pred_traj_fake_rel = generator(
-                obs_traj, obs_traj_rel, seq_start_end, visual_input_tensor, output_tensor
-            )
+            pred_traj_fake_rel = generator(obs_traj, obs_traj_rel, seq_start_end, visual_input_tensor, output_tensor)
             pred_traj_fake = relative_to_abs(pred_traj_fake_rel, obs_traj[:,:32,:][-1])
 
-            g_l2_loss_abs, g_l2_loss_rel = cal_l2_losses(
-                pred_traj_gt[:,:32,:], pred_traj_gt_rel[:,:32,:], pred_traj_fake,
-                pred_traj_fake_rel, loss_mask
-            )
-            ade, ade_l, ade_nl = cal_ade(
-                pred_traj_gt[:,:32,:], pred_traj_fake, linear_ped, non_linear_ped
-            )
+            g_l2_loss_abs, g_l2_loss_rel = cal_l2_losses(pred_traj_gt[:,:32,:], pred_traj_gt_rel[:,:32,:], pred_traj_fake,pred_traj_fake_rel, loss_mask)
+            ade, ade_l, ade_nl = cal_ade(pred_traj_gt[:,:32,:], pred_traj_fake, linear_ped, non_linear_ped)
 
-            fde, fde_l, fde_nl = cal_fde(
-                pred_traj_gt[:,:32,:], pred_traj_fake, linear_ped, non_linear_ped
-            )
+            fde, fde_l, fde_nl = cal_fde(pred_traj_gt[:,:32,:], pred_traj_fake, linear_ped, non_linear_ped)
 
             traj_real = torch.cat([obs_traj[:,:32,:], pred_traj_gt[:,:32,:]], dim=0)
             traj_real_rel = torch.cat([obs_traj_rel[:,:32,:], pred_traj_gt_rel[:,:32,:]], dim=0)
@@ -608,17 +599,10 @@ def check_accuracy(args, loader, generator, discriminator, d_loss_fn, train_load
     return metrics
 
 
-def cal_l2_losses(
-    pred_traj_gt, pred_traj_gt_rel, pred_traj_fake, pred_traj_fake_rel,
-    loss_mask
-):
+def cal_l2_losses(pred_traj_gt, pred_traj_gt_rel, pred_traj_fake, pred_traj_fake_rel,loss_mask):
 
-    g_l2_loss_abs = l2_loss(
-        pred_traj_fake, pred_traj_gt, loss_mask[:32], mode='sum'
-    )
-    g_l2_loss_rel = l2_loss(
-        pred_traj_fake_rel, pred_traj_gt_rel, loss_mask[:32], mode='sum'
-    )
+    g_l2_loss_abs = l2_loss(pred_traj_fake, pred_traj_gt, loss_mask[:32], mode='sum')
+    g_l2_loss_rel = l2_loss(pred_traj_fake_rel, pred_traj_gt_rel, loss_mask[:32], mode='sum')
     return g_l2_loss_abs, g_l2_loss_rel
 
 
@@ -629,16 +613,10 @@ def cal_ade(pred_traj_gt, pred_traj_fake, linear_ped, non_linear_ped):
     return ade, ade_l, ade_nl
 
 
-def cal_fde(
-    pred_traj_gt, pred_traj_fake, linear_ped, non_linear_ped
-):
+def cal_fde(pred_traj_gt, pred_traj_fake, linear_ped, non_linear_ped):
     fde = final_displacement_error(pred_traj_fake[-1], pred_traj_gt[-1])
-    fde_l = final_displacement_error(
-        pred_traj_fake[-1], pred_traj_gt[-1], linear_ped[:32]
-    )
-    fde_nl = final_displacement_error(
-        pred_traj_fake[-1], pred_traj_gt[-1], non_linear_ped[:32]
-    )
+    fde_l = final_displacement_error(pred_traj_fake[-1], pred_traj_gt[-1], linear_ped[:32])
+    fde_nl = final_displacement_error(pred_traj_fake[-1], pred_traj_gt[-1], non_linear_ped[:32])
     return fde, fde_l, fde_nl
 
 
