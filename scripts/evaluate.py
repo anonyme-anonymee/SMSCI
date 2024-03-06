@@ -39,7 +39,6 @@ def get_generator(checkpoint):
     generator.train()
     return generator
 
-
 def evaluate_helper(error, seq_start_end):
     sum_ = 0
     error = torch.stack(error, dim=1)
