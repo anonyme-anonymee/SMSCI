@@ -7,7 +7,7 @@ This repository contains the implementation of SMSCI: Simultaneous Modeling of S
 We explore the limitations of prior methods reliant on pedestrian positions for modeling social interactions and scene influences. 
 This research achieves a breakthrough in simultaneously predicting multiple pedestrian trajectories in a scene video by introducing the SMSCI model which uses Generative Adversarial Networks and sequence prediction. 
 By integrating both historical paths and environmental context, SMSCI accounts for both social interactions and scene influences, outperforming previous approaches. 
-Through experiments demonstrating enhanced accuracy and collision avoidance, the effectiveness of generating socially and physically valid trajectories is demonstrated. 
+Through experiments across various datasets demonstrating enhanced accuracy and collision avoidance, the effectiveness of generating socially and physically valid trajectories is demonstrated. 
 
 ![overview](https://github.com/anonyme-anonymee/SMSCI/assets/159822306/cc0361b7-2e20-4060-a6c5-b7027c948813)
 
@@ -32,7 +32,7 @@ bash scripts/download_data.sh
 This will create the directory `datasets/<dataset_name>` with train/ val/ and test/ splits. All the datasets are pre-processed to be in world coordinates i.e. in meters. We support five datasets ETH, ZARA1, ZARA2, HOTEL and UNIV. 
 We use leave-one-out approach, train on 4 sets and test on the remaining set. 
 
-For Stanford Drone dataset, each video for each scene in the videos directory has an associated annotation file (annotation.txt) and exemplary frame (reference.jpg) in the annotations directory. It consists of annotated videos of pedestrians, bikers, skateboarders, cars, buses, and golf carts navigating eight unique scenes on the Stanford University campus.
+For Stanford Drone dataset (SDD), each video for each scene in the videos directory has an associated annotation file (annotation.txt) and exemplary frame (reference.jpg) in the annotations directory. It consists of annotated videos of pedestrians, bikers, skateboarders, cars, buses, and golf carts navigating eight unique scenes on the Stanford University campus.
 
 Please download SDD dataset from their website (https://cvgl.stanford.edu/projects/uav_data/).
 
