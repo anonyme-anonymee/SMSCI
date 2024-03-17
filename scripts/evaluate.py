@@ -52,7 +52,6 @@ def evaluate_helper(error, seq_start_end):
         sum_ += _error
     return sum_
 
-
 def evaluate(args, loader, generator, num_samples, train_loader_visu):
     ade_outer, fde_outer = [], []
     total_traj = 0
@@ -108,9 +107,6 @@ def main(args):
         ade, fde = evaluate(_args, loader, generator, args.num_samples, train_loader_visu)
         print('Dataset: {}, Pred Len: {}, ADE: {:.2f}, FDE: {:.2f}'.format(args.dataset_name, _args.pred_len, ade, fde))
 
-
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args)
-
-
