@@ -62,7 +62,7 @@ parser.add_argument('--g_learning_rate', default=1e-4, type=float)
 parser.add_argument('--g_steps', default=1, type=int)
 
 # Pooling Options
-parser.add_argument('--pooling_type', default='pool_net')
+parser.add_argument('--pooling_type', default='attpool')
 parser.add_argument('--pool_every_timestep', default=1, type=bool_flag)
 # Pool Net Option
 parser.add_argument('--bottleneck_dim', default=8, type=int)
