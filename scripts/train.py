@@ -64,10 +64,8 @@ parser.add_argument('--g_steps', default=1, type=int)
 # Pooling Options
 parser.add_argument('--pooling_type', default='pool_net')
 parser.add_argument('--pool_every_timestep', default=1, type=bool_flag)
-
 # Pool Net Option
 parser.add_argument('--bottleneck_dim', default=8, type=int)
-
 # Social Pooling Options
 parser.add_argument('--neighborhood_size', default=2.0, type=float)
 parser.add_argument('--grid_size', default=8, type=int)
@@ -97,12 +95,10 @@ parser.add_argument('--use_gpu', default=1, type=int)
 parser.add_argument('--timing', default=0, type=int)
 parser.add_argument('--gpu_num', default="0", type=str)
 
-
 def init_weights(m):
     classname = m.__class__.__name__
     if classname.find('Linear') != -1:
         nn.init.kaiming_normal_(m.weight)
-
 
 def get_dtypes(args):
     long_dtype = torch.LongTensor
@@ -172,7 +168,7 @@ def main(args):
     embed_size              = 64
     global dropout_val
     dropout_val             = 0.2 #0.5
-    teacher_forcing_ratio   = 0.7 # 0.9
+    teacher_forcing_ratio   = 0.7 
     regularization_factor   = 0.5 # 0.001
     avg_n_path_eval         = 20
     bst_n_path_eval         = 20
@@ -180,7 +176,7 @@ def main(args):
     regularization_mode     = "regular" #"weighted","e_weighted", "regular"
     startpoint_mode         = "on" #"on","off"
     enc_out                 = "on" #"on","off"
-    biased_loss_mode        = 0 # 0 , 1
+    biased_loss_mode        = 0
 
     table_out   = "results_delta"
     table       = "dataset_T_length_"+str(T_total)+"delta_coordinates"
@@ -444,8 +440,7 @@ def discriminator_step(args, batch, generator, discriminator, d_loss_fn, optimiz
     optimizer_d.zero_grad()
     loss.backward()
     if args.clipping_threshold_d > 0:
-        nn.utils.clip_grad_norm_(discriminator.parameters(),
-                                 args.clipping_threshold_d)
+        nn.utils.clip_grad_norm_(discriminator.parameters(),args.clipping_threshold_d)
     optimizer_d.step()
 
     return losses
@@ -510,9 +505,7 @@ def generator_step(args, batch, generator, discriminator, g_loss_fn, optimizer_g
     optimizer_g.zero_grad()
     loss.backward()
     if args.clipping_threshold_g > 0:
-        nn.utils.clip_grad_norm_(
-            generator.parameters(), args.clipping_threshold_g
-        )
+        nn.utils.clip_grad_norm_(generator.parameters(), args.clipping_threshold_g)
     optimizer_g.step()
 
     return losses
@@ -605,20 +598,17 @@ def cal_l2_losses(pred_traj_gt, pred_traj_gt_rel, pred_traj_fake, pred_traj_fake
     g_l2_loss_rel = l2_loss(pred_traj_fake_rel, pred_traj_gt_rel, loss_mask[:32], mode='sum')
     return g_l2_loss_abs, g_l2_loss_rel
 
-
 def cal_ade(pred_traj_gt, pred_traj_fake, linear_ped, non_linear_ped):
     ade = displacement_error(pred_traj_fake, pred_traj_gt)
     ade_l = displacement_error(pred_traj_fake, pred_traj_gt, linear_ped[:32])
     ade_nl = displacement_error(pred_traj_fake, pred_traj_gt, non_linear_ped[:32])
     return ade, ade_l, ade_nl
 
-
 def cal_fde(pred_traj_gt, pred_traj_fake, linear_ped, non_linear_ped):
     fde = final_displacement_error(pred_traj_fake[-1], pred_traj_gt[-1])
     fde_l = final_displacement_error(pred_traj_fake[-1], pred_traj_gt[-1], linear_ped[:32])
     fde_nl = final_displacement_error(pred_traj_fake[-1], pred_traj_gt[-1], non_linear_ped[:32])
     return fde, fde_l, fde_nl
-
 
 if __name__ == '__main__':
     args = parser.parse_args()
