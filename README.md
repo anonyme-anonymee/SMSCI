@@ -5,9 +5,13 @@ This repository contains the implementation of SMSCI: Simultaneous Modeling of S
 <div align="center">
 
 ![zara2_gif](https://github.com/anonyme-anonymee/SMSCI/assets/159822306/5836d42a-3ae2-4e8d-a583-58d5c9ac9eee)
-width="300"
 
 </div>
+
+<div align="center">
+  <img src="https://github.com/anonyme-anonymee/SMSCI/assets/159822306/5836d42a-3ae2-4e8d-a583-58d5c9ac9eee" alt="zara2_gif" width="300">
+</div>
+
 
 # Overview
 
