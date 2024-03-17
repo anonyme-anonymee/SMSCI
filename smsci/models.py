@@ -162,7 +162,6 @@ def position_embedding(input, d_model):
     dim = torch.arange(d_model // 2, dtype=torch.float32, device=input.device).view(1, -1)
     sin = torch.sin(input / 10000 ** (2 * dim / d_model))
     cos = torch.cos(input / 10000 ** (2 * dim / d_model))
-
     out = torch.zeros((input.shape[0], d_model), device=input.device)
     out[:, ::2] = sin
     out[:, 1::2] = cos
@@ -232,11 +231,9 @@ class ScaledDotProductAttention(nn.Module):
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, d_k, d_v, h, dff=2048, dropout=.1):
         super(MultiHeadAttention, self).__init__()
-
         self.attention = ScaledDotProductAttention(d_model=d_model, d_k=d_k, d_v=d_v, h=h)
         self.dropout = nn.Dropout(p=dropout)
         self.layer_norm = nn.LayerNorm(d_model)
-
         self.fc = nn.Sequential(*[nn.Linear(d_model, dff), nn.ReLU(inplace=True), nn.Dropout(p=dropout),nn.Linear(dff, d_model)])
 
     def forward(self, queries, keys, values):
@@ -626,15 +623,13 @@ class SocialPooling(nn.Module):
             grid_pos[within_bound != 0] = 0
             grid_pos = grid_pos.view(-1, 1).expand_as(curr_hidden_repeat)
 
-            curr_pool_h = curr_pool_h.scatter_add(0, grid_pos,
-                                                  curr_hidden_repeat)
+            curr_pool_h = curr_pool_h.scatter_add(0, grid_pos,curr_hidden_repeat)
             curr_pool_h = curr_pool_h[1:]
             pool_h.append(curr_pool_h.view(num_ped, -1))
 
         pool_h = torch.cat(pool_h, dim=0)
         pool_h = self.mlp_pool(pool_h)
         return pool_h
-
 
 class TrajectoryGenerator(nn.Module):
     def __init__(
@@ -667,12 +662,9 @@ class TrajectoryGenerator(nn.Module):
         
         self.encoder = Encoder(embedding_dim=embedding_dim,h_dim=encoder_h_dim,mlp_dim=mlp_dim,num_layers=num_layers,dropout=dropout)
         self.encoder.apply(init_weights)
-        
         self.vision = _DCE_Transformer(device,dropout1d=dropout_val)
         self.vision.apply(init_weights)
-        
         self.pooling = nn.AdaptiveAvgPool1d(256)
-                
         self.decoder = Decoder(
             pred_len,
             embedding_dim=embedding_dim,
@@ -738,16 +730,9 @@ class TrajectoryGenerator(nn.Module):
             input_dim = encoder_h_dim
 
         if self.mlp_decoder_needed():
-            mlp_decoder_context_dims = [
-                input_dim, mlp_dim, decoder_h_dim - self.noise_first_dim
-            ]
+            mlp_decoder_context_dims = [input_dim, mlp_dim, decoder_h_dim - self.noise_first_dim]
 
-            self.mlp_decoder_context = make_mlp(
-                mlp_decoder_context_dims,
-                activation=activation,
-                batch_norm=batch_norm,
-                dropout=dropout
-            )
+            self.mlp_decoder_context = make_mlp(mlp_decoder_context_dims,activation=activation,batch_norm=batch_norm,dropout=dropout)
 
     def add_noise(self, _input, seq_start_end, user_noise=None):
         """
@@ -976,8 +961,6 @@ class TrajectoryDiscriminator(nn.Module):
         if self.d_type == 'local':
             classifier_input = final_h.squeeze()
         else:
-            classifier_input = self.pool_net(
-                final_h.squeeze(), seq_start_end, traj[0]
-            )
+            classifier_input = self.pool_net(final_h.squeeze(), seq_start_end, traj[0])
         scores = self.real_classifier(classifier_input)
         return scores
