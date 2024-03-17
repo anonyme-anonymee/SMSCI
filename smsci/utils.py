@@ -14,7 +14,6 @@ def find_nan(variable, var_name):
     if np.isnan(variable_n).any():
         exit('%s has nan' % var_name)
 
-
 def bool_flag(s):
     if s == '1':
         return True
@@ -23,10 +22,8 @@ def bool_flag(s):
     msg = 'Invalid value "%s" for bool flag (should be 0 or 1)'
     raise ValueError(msg % s)
 
-
 def lineno():
     return str(inspect.currentframe().f_back.f_lineno)
-
 
 def get_total_norm(parameters, norm_type=2):
     if norm_type == float('inf'):
@@ -77,7 +74,6 @@ def get_dset_pathSDD(dset_name, dset_type):
     parent_dir = os.path.abspath(os.path.join(_dir, os.pardir))  # Go up one level to the project's directory
     dataset_path = os.path.join(parent_dir, 'datasets', dset_name, dset_type)
     return dataset_path
-
 
 def relative_to_abs(rel_traj, start_pos):
     """
