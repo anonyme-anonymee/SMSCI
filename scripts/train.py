@@ -108,7 +108,6 @@ def get_dtypes(args):
         float_dtype = torch.cuda.FloatTensor
     return long_dtype, float_dtype
 
-
 def main(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
     train_path = get_dset_path(args.dataset_name, 'train')
@@ -126,10 +125,7 @@ def main(args):
         args.num_iterations = int(iterations_per_epoch * args.num_epochs)
 
     logger.info('There are {} iterations per epoch'.format(iterations_per_epoch))
-
-
-    stochastic_mode = 1 #output
-
+    stochastic_mode = 1
     # Make folder for outputs and logs
     dataset_name = "eth"
     __file__=os.getcwd()
@@ -400,7 +396,6 @@ def main(args):
             g_steps_left = args.g_steps
             if t >= args.num_iterations:
                 break
-        
 
 def discriminator_step(args, batch, generator, discriminator, d_loss_fn, optimizer_d):
     batch = [tensor.cuda() for tensor in batch]
@@ -445,7 +440,6 @@ def discriminator_step(args, batch, generator, discriminator, d_loss_fn, optimiz
 
     return losses
 
-
 def generator_step(args, batch, generator, discriminator, g_loss_fn, optimizer_g, train_loader_visu):
     batch = [tensor.cuda() for tensor in batch]
     (obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel, non_linear_ped,
@@ -460,9 +454,7 @@ def generator_step(args, batch, generator, discriminator, g_loss_fn, optimizer_g
         output_tensor = pred.float().squeeze().to('cuda', non_blocking=True)
         visual_input_tensor = visual_obs.squeeze().to('cuda', non_blocking=True)
     
-
     for _ in range(args.best_k):
-        
         generator_out = generator(obs_traj, obs_traj_rel, seq_start_end, visual_input_tensor, output_tensor)
 
         pred_traj_fake_rel = generator_out
@@ -509,7 +501,6 @@ def generator_step(args, batch, generator, discriminator, g_loss_fn, optimizer_g
     optimizer_g.step()
 
     return losses
-
 
 def check_accuracy(args, loader, generator, discriminator, d_loss_fn, train_loader_visu, limit=False):
     d_losses = []
@@ -590,7 +581,6 @@ def check_accuracy(args, loader, generator, discriminator, d_loss_fn, train_load
 
     generator.train()
     return metrics
-
 
 def cal_l2_losses(pred_traj_gt, pred_traj_gt_rel, pred_traj_fake, pred_traj_fake_rel,loss_mask):
 
