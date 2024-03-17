@@ -2,7 +2,9 @@
 
 This repository contains the implementation of SMSCI: Simultaneous Modeling of Social and Contextual Interactions for Multi Pedestrian Trajectory Prediction.
 
+<div align="center">
 ![zara2_gif](https://github.com/anonyme-anonymee/SMSCI/assets/159822306/64710484-7905-44cf-b9e5-c193ae750cc1)
+</div>
 
 # Overview
 
