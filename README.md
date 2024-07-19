@@ -42,7 +42,8 @@ For Stanford Drone dataset (SDD), each video for each scene in the videos direct
 Please download SDD dataset from their website (https://cvgl.stanford.edu/projects/uav_data/).
 
 Annotation file format:
-Each line in the annotations.txt file corresponds to an annotation. Each line contains 10+ columns, separated by spaces. The definition of these columns are:
+Each line in the annotations.txt file corresponds to an annotation. Each line contains 10+ columns, separated by spaces. 
+The definition of these columns are:
 
     1   Track ID. All rows with the same ID belong to the same path.
     2   xmin. The top left x-coordinate of the bounding box.
