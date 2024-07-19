@@ -12,7 +12,6 @@ from torchvision import datasets, models, transforms
 from torchvision.transforms import ToTensor 
 import numpy as np
 import time
-import yaml
 
 global dropout_val
 dropout_val             = 0.2 
