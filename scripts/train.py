@@ -16,7 +16,6 @@ from torchvision.utils import save_image
 from torch.distributions.normal import Normal
 from PIL import Image
 import datetime
-
 from smsci.data.loader import data_loader
 from smsci.losses import gan_g_loss, gan_d_loss, l2_loss
 from smsci.losses import displacement_error, final_displacement_error
@@ -25,7 +24,6 @@ from smsci.utils import int_tuple, bool_flag, get_total_norm
 from smsci.utils import relative_to_abs, get_dset_path
 
 torch.backends.cudnn.benchmark = True
-
 parser = argparse.ArgumentParser()
 FORMAT = '[%(levelname)s: %(filename)s: %(lineno)4d]: %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, stream=sys.stdout)
